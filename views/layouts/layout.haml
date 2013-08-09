@@ -1,0 +1,19 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:charset => "utf-8"}/
+    %title= render_partial :title
+    %link{:href => "/css/bootstrap.min.css", :rel => "stylesheet"}/
+    %link{:href => "/css/bootstrap-glyphicons.css", :rel => "stylesheet"}/
+    %link{:href => "/css/style.css", :rel => "stylesheet"}/
+    %script{:src => "/js/jquery.js"}
+    %script{:src => "/js/bootstrap.min.js"}
+    %script{:src => "/js/app.js"}
+  %body
+    .navbar.navbar-inverse.navbar-fixed-top
+      %a.navbar-brand{:href => "/"} #{$redis.hget("#{NAMESPACE}:config", 'corp') || "CORPNAME"}
+      %ul.nav.navbar-nav
+        %li
+          %a{:href => "/assets"} Assets
+    #main-container.container
+      = yield

@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    %title= render_partial :title
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "width=device-width", :name => "viewport"}/
+    %link{:href => "http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.css", :rel => "stylesheet"}/
+    = javascript_script_tag "js/jquery.js"
+    %script{:src => "http://code.jquery.com/mobile/1.0.1/jquery.mobile-1.0.1.min.js"}
+  %body
+    %div{"data-role" => "page"}
+      %div{"data-role" => "header"}
+        %h1 Sinatra Boilerplate
+      %div{"data-role" => "content"}
+        %h2 Bootstrap your Sinatra Web Development
+        = yield
