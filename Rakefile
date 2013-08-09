@@ -60,6 +60,20 @@ namespace :cache do
       end
     end
   end
+  task :systemid do
+    require 'yaml'
+    require 'redis'
+    require 'hiredis'
+    @namespace = YAML.load_file('./config/redis.yml')[:namespace]
+    print "Environment name (e.g. production/development): "
+    @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
+    @ss = YAML.load_file('data/systems.yml')
+    @ss.keys.each do |key|
+      @ss[key].keys.each do |attrib|
+        @redis.hset "#{@namespace}:system:#{key}", attrib, @ss[key]
+      end
+    end
+  end
 end
 
 desc "Compiles all .scss files in the sass directory and places them in public/css (minified)"
