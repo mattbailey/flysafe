@@ -1,1 +1,5 @@
 config/redis.yml
+log/*
+tmp/*
+!tmp/pids
+tmp/pids/*
