@@ -17,7 +17,8 @@ task :configure do
   puts "Don't forget to edit your config/redis.yml file"
   puts "Your redis namespace is set to: #{@namespace}"
   print "Environment name (e.g. production/development): "
-  @redis = Redis.new(YAML.load_file('./config/redis.yml')[gets.chomp.to_sym])
+  env = gets.chomp.to_sym
+  @redis = Redis.new(YAML.load_file('./config/redis.yml')[env])
   print "Corp name or site title: "
   @redis.hset("#{@namespace}:config", "corp", gets.chomp)
   print "Enable HTTP Auth in production (y/[n])? "
