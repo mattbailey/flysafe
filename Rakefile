@@ -17,16 +17,15 @@ task :configure do
   puts "Don't forget to edit your config/redis.yml file"
   puts "Your redis namespace is set to: #{@namespace}"
   print "Environment name (e.g. production/development): "
-  env = gets.chomp.to_sym
-  @redis = Redis.new(YAML.load_file('./config/redis.yml')[env])
+  @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
   print "Corp name or site title: "
-  @redis.hset("#{@namespace}:config", "corp", gets.chomp)
+  @redis.hset("#{@namespace}:config", "corp", STDIN.gets.chomp)
   print "Enable HTTP Auth in production (y/[n])? "
-  if gets.chomp.downcase == 'y'
+  if STDIN.gets.chomp.downcase == 'y'
     print "HTTP Auth user: "
-    @redis.hset("#{@namespace}:config", "user", gets.chomp)
+    @redis.hset("#{@namespace}:config", "user", STDIN.gets.chomp)
     print "HTTP Auth password: "
-    @redis.hset("#{@namespace}:config", "password", gets.chomp)
+    @redis.hset("#{@namespace}:config", "password", STDIN.gets.chomp)
   end
 end
 
@@ -38,9 +37,9 @@ namespace :cache do
     @eve = EAAL::API(nil,nil)
     @eve.scope = 'eve'
     print "Environment name (e.g. production/development): "
-    @redis = Redis.new(YAML.load_file('./config/redis.yml')[gets.chomp.to_sym])
+    @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
     print "Estimate how many items exist [35000]: "
-    estimated = gets.chomp || 35000
+    estimated = STDIN.gets.chomp || 35000
     (estimated / 250).times do |block|
       b = block * 250
       unless $redis.hget "#{NAMESPACE}:typecache", b
