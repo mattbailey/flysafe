@@ -43,7 +43,7 @@ namespace :cache do
     estimated = STDIN.gets.chomp.to_i
     (estimated / 250).times do |block|
       b = block * 250
-      unless $redis.hget "#{@namespace}:typecache", b
+      unless @redis.hget "#{@namespace}:typecache", b
         @eve.typeName(ids: Array(b..b+249).join(',')).types.each do |item|
           unless item.typeName == "Unknown Type"
             @redis.hset "#{@namespace}:typecache", item.typeID, item.typeName
