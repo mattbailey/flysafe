@@ -34,6 +34,7 @@ namespace :cache do
     require 'eaal'
     require 'redis'
     require 'hiredis'
+    require 'yaml'
     @eve = EAAL::API.new(nil,nil)
     @eve.scope = 'eve'
     @namespace = YAML.load_file('./config/redis.yml')[:namespace]
