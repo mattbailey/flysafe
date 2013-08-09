@@ -12,6 +12,8 @@ Getting started:
 ```
 git clone https://github.com/mattbailey/flysafe
 cd flysafe
+cp config/redis.yml.dist config/redis.yml
+$EDITOR config/redis.yml
 bundle install
 rake configure
 thin
