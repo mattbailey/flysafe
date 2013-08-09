@@ -18,7 +18,7 @@ $EDITOR config/redis.yml
 bundle install
 rake configure
 rake cache:itemid # This takes a few mintes, caches all itemID => itemName
-thin
+thin start
 ```
 
 
