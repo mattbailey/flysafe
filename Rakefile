@@ -16,13 +16,13 @@ task :configure do
   puts "Don't forget to edit your config/redis.yml file"
   puts "Your redis namespace is set to: #{@namespace}"
   print "Corp name or site title: "
-  $redis.hset("#{@namespace}:config", "corp") = gets.chomp
+  $redis.hset("#{@namespace}:config", "corp", gets.chomp)
   print "Enable HTTP Auth in production (y/[n])? "
   if gets.chomp.downcase == 'y'
     print "HTTP Auth user: "
-    $redis.hset("#{@namespace}:config", "user") = gets.chomp
+    $redis.hset("#{@namespace}:config", "user", gets.chomp)
     print "HTTP Auth password: "
-    $redis.hset("#{@namespace}:config", "password") = gets.chomp
+    $redis.hset("#{@namespace}:config", "password", gets.chomp)
   end
 end
 
