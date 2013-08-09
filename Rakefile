@@ -51,8 +51,11 @@ namespace :cache do
     puts "This will seed a redis hash with itemID > itemName hash table."
     puts "You might have to run it more than once if you get throttled"
     puts "You should end up with around 20k keys (HKEYS #{@namespace}:typecache)"
-    print "Environment name (e.g. production/development): "
-    @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
+    unless ENV['ENVIRONMENT']
+      print "Environment name (e.g. production/development): "
+      ENV['ENVIRONMENT'] = STDIN.gets.chomp.to_sym
+    end
+    @redis = Redis.new(YAML.load_file('./config/redis.yml')[ENV['ENVIRONMENT'].to_sym])
     print "Estimate how many items exist, a good guess is 35000: "
     estimated = STDIN.gets.chomp.to_i
     (estimated / 250).times do |block|
@@ -71,8 +74,11 @@ namespace :cache do
     require 'redis'
     require 'hiredis'
     @namespace = YAML.load_file('./config/redis.yml')[:namespace]
-    print "Environment name (e.g. production/development): "
-    @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
+    unless ENV['ENVIRONMENT']
+      print "Environment name (e.g. production/development): "
+      ENV['ENVIRONMENT'] = STDIN.gets.chomp.to_sym
+    end
+    @redis = Redis.new(YAML.load_file('./config/redis.yml')[ENV['ENVIRONMENT'].to_sym])
     @ss = YAML.load_file('data/systems.yml')
     @ss.keys.each do |key|
       @ss[key].keys.each do |attrib|
@@ -85,14 +91,26 @@ namespace :cache do
     require 'redis'
     require 'hiredis'
     @namespace = YAML.load_file('./config/redis.yml')[:namespace]
-    print "Environment name (e.g. production/development): "
-    @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
+    unless ENV['ENVIRONMENT']
+      print "Environment name (e.g. production/development): "
+      ENV['ENVIRONMENT'] = STDIN.gets.chomp.to_sym
+    end
+    @redis = Redis.new(YAML.load_file('./config/redis.yml')[ENV['ENVIRONMENT'].to_sym])
     @ss = YAML.load_file('data/stations.yml')
     @ss.keys.each do |key|
       @ss[key].keys.each do |attrib|
         @redis.hset "#{@namespace}:stations:#{key}", attrib, @ss[key][attrib]
       end
     end
+  end
+  task :all do
+    unless ENV['ENVIRONMENT']
+      print "Environment name (e.g. production/development): "
+      ENV['ENVIRONMENT'] = STDIN.gets.chomp
+    end
+    Rake::Task["cache:itemid"].invoke
+    Rake::Task["cache:systemid"].invoke
+    Rake::Task["cache:stationid"].invoke
   end
 end
 
