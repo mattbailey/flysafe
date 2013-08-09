@@ -2,7 +2,6 @@ require 'rake/testtask'
 require 'open-uri'
 require 'fileutils'
 require 'zip/zipfilesystem'
-require 'yaml'
 
 Rake::TestTask.new do |t|
   t.libs.push("./")
@@ -11,33 +10,42 @@ Rake::TestTask.new do |t|
 end
 
 task :configure do
+  require 'redis'
+  require 'yaml'
   @namespace = YAML.load_file('./config/redis.yml')[:namespace]
   puts "Configure flysafe with Redis"
   puts "Don't forget to edit your config/redis.yml file"
   puts "Your redis namespace is set to: #{@namespace}"
+  print "Environment name (e.g. production/development): "
+  @redis = Redis.new(YAML.load_file('./config/redis.yml')[gets.chomp.to_sym])
   print "Corp name or site title: "
-  $redis.hset("#{@namespace}:config", "corp", gets.chomp)
+  @redis.hset("#{@namespace}:config", "corp", gets.chomp)
   print "Enable HTTP Auth in production (y/[n])? "
   if gets.chomp.downcase == 'y'
     print "HTTP Auth user: "
-    $redis.hset("#{@namespace}:config", "user", gets.chomp)
+    @redis.hset("#{@namespace}:config", "user", gets.chomp)
     print "HTTP Auth password: "
-    $redis.hset("#{@namespace}:config", "password", gets.chomp)
+    @redis.hset("#{@namespace}:config", "password", gets.chomp)
   end
 end
 
 namespace :cache do
   task :itemid do
     require 'eaal'
+    require 'redis'
+    require 'hiredis'
     @eve = EAAL::API(nil,nil)
     @eve.scope = 'eve'
-    # guess 35000 for now
+    print "Environment name (e.g. production/development): "
+    @redis = Redis.new(YAML.load_file('./config/redis.yml')[gets.chomp.to_sym])
+    print "Estimate how many items exist [35000]: "
+    estimated = gets.chomp || 35000
     (estimated / 250).times do |block|
       b = block * 250
       unless $redis.hget "#{NAMESPACE}:typecache", b
         @eve.typeName(ids: Array(b..b+249).join(',')).types.each do |item|
           unless item.typeName == "Unknown Type"
-            $redis.hset "#{NAMESPACE}:typecache", item.typeID, item.typeName
+            @redis.hset "#{NAMESPACE}:typecache", item.typeID, item.typeName
           end
         end
       end
