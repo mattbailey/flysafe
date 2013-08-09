@@ -9,7 +9,7 @@ redis
 
 Getting started:
 
-```
+```bash
 redis-server > /dev/null & # or however you want to start redis-server
 git clone https://github.com/mattbailey/flysafe
 cd flysafe
