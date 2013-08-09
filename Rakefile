@@ -34,7 +34,7 @@ namespace :cache do
     require 'eaal'
     require 'redis'
     require 'hiredis'
-    @eve = EAAL::API(nil,nil)
+    @eve = EAAL::API.new(nil,nil)
     @eve.scope = 'eve'
     print "Environment name (e.g. production/development): "
     @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
