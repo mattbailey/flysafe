@@ -20,3 +20,9 @@ rake configure
 rake cache:itemid # This takes a few mintes, caches all itemID => itemName
 thin
 ```
+
+
+This is cool.
+=============
+
+Donate some ISK to 'ribo' in game, or make some pull requests!
