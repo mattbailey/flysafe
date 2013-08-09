@@ -10,7 +10,7 @@ module Flysafe
 end
 
 # From rails
-module Hash
+class Hash
   def transform_keys
     result = {}
     each_key do |key|

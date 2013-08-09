@@ -15,12 +15,20 @@ def assets_to_list(assets)
     if asset.container != {}
       out << assets_to_list(asset.container['contents'])
     else
+      if asset.locationID.to_i >= 66000000 && asset.locationID.to_i < 67000000
+        @location = $redis.hgetall("#{NAMESPACE}:system:#{asset.locationID.to_i - 6000001}", :solarSystemName)
+      elsif asset.locationID.to_i >= 67000000 && asset.locationID.to_i < 68000000
+        @location = $redis.hget("#{NAMESPACE}:system:#{asset.locationID.to_i - 6000000}", :solarSystemName)
+      else
+        @location = $redis.hget("#{NAMESPACE}:system:#{asset.locationID.to_i}", :solarSystemName)
+      end
       out << {
         :type => $redis.hget("#{NAMESPACE}:typecache", asset.typeID),
         :typeID => asset.typeID,
         :qty  => asset.quantity,
         :singleton => asset.singleton,
-        :location => asset.locationID
+        :locationid => asset.locationID,
+        :location => @location
       }
     end
   end
@@ -41,6 +49,9 @@ def array_to_haml(array)
         end
         haml_tag :td do
           haml_concat item[:location]
+        end
+        haml_tag :td do
+          haml_concat item[:locationid]
         end
       end
     end

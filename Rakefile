@@ -70,7 +70,7 @@ namespace :cache do
     @ss = YAML.load_file('data/systems.yml')
     @ss.keys.each do |key|
       @ss[key].keys.each do |attrib|
-        @redis.hset "#{@namespace}:system:#{key}", attrib, @ss[key]
+        @redis.hset "#{@namespace}:system:#{key}", attrib, @ss[key][attrib]
       end
     end
   end
