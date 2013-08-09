@@ -10,6 +10,7 @@ redis
 Getting started:
 
 ```
+redis-server > /dev/null & # or however you want to start redis-server
 git clone https://github.com/mattbailey/flysafe
 cd flysafe
 cp config/redis.yml.dist config/redis.yml
