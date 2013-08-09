@@ -10,7 +10,8 @@ redis
 Getting started:
 
 ```
-git clone
+git clone https://github.com/mattbailey/flysafe
+cd flysafe
 bundle install
 rake configure
 thin
