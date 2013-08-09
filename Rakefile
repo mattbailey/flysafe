@@ -21,6 +21,10 @@ task :configure do
   print "Corp name or site title: "
   @redis.hset("#{@namespace}:config", "corp", STDIN.gets.chomp)
   print "Enable HTTP Auth in production (y/[n])? "
+  print "Corp director keyid: "
+  @redis.hset("#{@namespace}:config", "masterkeyid", STDIN.gets.chomp)
+  print "Corp director vcode: "
+  @redis.hset("#{@namespace}:config", "mastervcode", STDIN.gets.chomp)
   if STDIN.gets.chomp.downcase == 'y'
     print "HTTP Auth user: "
     @redis.hset("#{@namespace}:config", "user", STDIN.gets.chomp)
