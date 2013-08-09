@@ -38,14 +38,15 @@ namespace :cache do
     @eve.scope = 'eve'
     print "Environment name (e.g. production/development): "
     @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
+    @namespace = YAML.load_file('./config/redis.yml')[:namespace]
     print "Estimate how many items exist, a good guess is 35000: "
     estimated = STDIN.gets.chomp.to_i
     (estimated / 250).times do |block|
       b = block * 250
-      unless $redis.hget "#{NAMESPACE}:typecache", b
+      unless $redis.hget "#{@namespace}:typecache", b
         @eve.typeName(ids: Array(b..b+249).join(',')).types.each do |item|
           unless item.typeName == "Unknown Type"
-            @redis.hset "#{NAMESPACE}:typecache", item.typeID, item.typeName
+            @redis.hset "#{@namespace}:typecache", item.typeID, item.typeName
           end
         end
       end
