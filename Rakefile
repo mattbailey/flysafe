@@ -36,9 +36,12 @@ namespace :cache do
     require 'hiredis'
     @eve = EAAL::API.new(nil,nil)
     @eve.scope = 'eve'
+    @namespace = YAML.load_file('./config/redis.yml')[:namespace]
+    puts "This will seed a redis hash with itemID > itemName hash table."
+    puts "You might have to run it more than once if you get throttled"
+    puts "You should end up with around 20k keys (HKEYS #{@namespace}:typecache)"
     print "Environment name (e.g. production/development): "
     @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
-    @namespace = YAML.load_file('./config/redis.yml')[:namespace]
     print "Estimate how many items exist, a good guess is 35000: "
     estimated = STDIN.gets.chomp.to_i
     (estimated / 250).times do |block|
