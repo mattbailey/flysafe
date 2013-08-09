@@ -39,7 +39,12 @@ namespace :cache do
     print "Environment name (e.g. production/development): "
     @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
     print "Estimate how many items exist [35000]: "
-    estimated = STDIN.gets.chomp || 35000
+    est = STDIN.gets.chomp
+    unless est == ""
+      estimated = 35000
+    else
+      estimated = est.to_i
+    end
     (estimated / 250).times do |block|
       b = block * 250
       unless $redis.hget "#{NAMESPACE}:typecache", b
