@@ -38,13 +38,8 @@ namespace :cache do
     @eve.scope = 'eve'
     print "Environment name (e.g. production/development): "
     @redis = Redis.new(YAML.load_file('./config/redis.yml')[STDIN.gets.chomp.to_sym])
-    print "Estimate how many items exist [35000]: "
-    est = STDIN.gets.chomp
-    unless est == ""
-      estimated = 35000
-    else
-      estimated = est.to_i
-    end
+    print "Estimate how many items exist, a good guess is 35000: "
+    estimated = STDIN.gets.chomp.to_i
     (estimated / 250).times do |block|
       b = block * 250
       unless $redis.hget "#{NAMESPACE}:typecache", b
