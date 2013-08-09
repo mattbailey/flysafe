@@ -1,24 +1,7 @@
 %h1 Assets
 %table.table-striped.table-condensed
   %tr
-    %td Type
-    %td Qty
-    %td Location
-  - @assets.each do |asset|
-    - unless asset.is_a? Array
-      %tr
-        %td #{asset[:type]}
-        %td #{asset[:qty]}
-        %td #{asset[:location]}
-    - else
-      - asset.each do |contained|
-        - unless contained.is_a? Array
-          %tr
-            %td #{contained[:type]}
-            %td #{contained[:qty]}
-        - else
-          - unless contained.is_a? Array
-            - contained.each do |item|
-              %tr
-                %td #{item[:type]}
-                %td #{item[:qty]}
+    %th Type
+    %th Qty
+    %th Location
+  - array_to_haml(@assets)

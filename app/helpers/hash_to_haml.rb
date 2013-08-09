@@ -28,12 +28,21 @@ def assets_to_list(assets)
 end
 
 def array_to_haml(array)
-  out = ""
   array.each do |item|
-    if item.is_a? Array
-      out << array_to_haml(item)
-    else
-      out << "null" 
+    haml_tag :tr do
+      if item.is_a? Array
+        array_to_haml(item)
+      else
+        haml_tag :td do
+          haml_concat item[:type]
+        end
+        haml_tag :td do
+          haml_concat item[:qty]
+        end
+        haml_tag :td do
+          haml_concat item[:location]
+        end
+      end
     end
   end
 end
