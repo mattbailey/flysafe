@@ -1,25 +1,11 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    addressable (2.3.5)
     bond (0.4.3)
     bson (1.9.1)
     bson_ext (1.9.1)
       bson (~> 1.9.1)
     daemons (1.1.9)
-    data_objects (0.10.13)
-      addressable (~> 2.1)
-    digest-sha3 (1.0.2)
-    dm-core (1.2.1)
-      addressable (~> 2.3)
-    dm-do-adapter (1.2.0)
-      data_objects (~> 0.10.6)
-      dm-core (~> 1.2.0)
-    dm-sqlite-adapter (1.2.0)
-      dm-do-adapter (~> 1.2.0)
-      do_sqlite3 (~> 0.10.6)
-    do_sqlite3 (0.10.13)
-      data_objects (= 0.10.13)
     eaal (0.1.12)
       faraday (>= 0.8.4)
       hpricot (>= 0.6)
@@ -77,8 +63,6 @@ PLATFORMS
 
 DEPENDENCIES
   bson_ext
-  digest-sha3
-  dm-sqlite-adapter
   eaal
   haml
   hiredis
