@@ -17,7 +17,7 @@ cp config/redis.yml.dist config/redis.yml
 $EDITOR config/redis.yml
 bundle install
 rake configure
-rake cache:itemid # This takes a few mintes, caches all itemID => itemName
+rake cache:all # This takes a few mintes
 thin start
 ```
 
