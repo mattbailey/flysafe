@@ -9,6 +9,12 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
+task :deploy do
+  require 'yaml'
+  @deploy = YAML.load_file('./config/deploy.yml')
+  `ssh #{@deploy[:server]} cd #{@deploy[:path]} && git pull && thin -e production -d restart`
+end
+
 task :configure do
   require 'redis'
   require 'yaml'
