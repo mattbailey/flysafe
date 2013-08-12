@@ -1,60 +1,61 @@
-include Flysafe
-
-def hash_to_haml(hash, level=0)
-  result = [ "#{INDENT * level}%ul" ]
-  hash.each do |key,value|
-    result << "#{INDENT * (level + 1)}%li #{key}"
-    result << hash_to_haml(value, level + 2) if value.is_a?(Hash)
+def location_get(lid)
+  if lid >= 66000000 && lid < 67000000
+    $redis.hgetall("#{NAMESPACE}:system:#{lid - 6000001}", :solarSystemName)
+  elsif lid >= 67000000 && lid < 68000000
+    $redis.hget("#{NAMESPACE}:system:#{lid - 6000000}", :solarSystemName)
+  elsif lid > 60000000 && lid < 61000000
+    $redis.hget("#{NAMESPACE}:stations:#{lid}", :stationName)
+  else
+    $redis.hget("#{NAMESPACE}:system:#{lid}", :solarSystemName)
   end
-  result.join("\n")
 end
 
-def assets_to_list(assets, tempkey)
-  out = []
-  assets.each do |asset|
-    if asset.container != {}
-      out << assets_to_list(asset.container['contents'], tempkey)
-    else
-      @lid = asset.locationID
-      if @lid.to_i >= 66000000 && @lid.to_i < 67000000
-        @location = $redis.hgetall("#{NAMESPACE}:system:#{@lid.to_i - 6000001}", :solarSystemName)
-      elsif @lid.to_i >= 67000000 && @lid.to_i < 68000000
-        @location = $redis.hget("#{NAMESPACE}:system:#{@lid.to_i - 6000000}", :solarSystemName)
-      elsif @lid.to_i > 60000000 && @lid.to_i < 61000000
-        @location = $redis.hget("#{NAMESPACE}:stations:#{@lid.to_i}", :stationName)
-      else
-        @location = $redis.hget("#{NAMESPACE}:system:#{@lid.to_i}", :solarSystemName)
+def asset_haml_station(assets)
+  haml_tag 'div.panel' do
+    haml_tag 'div.panel-heading' do
+      haml_tag :b do
+        haml_concat "Items not in a container"
       end
-      out << {
-        :type => $redis.hget("#{NAMESPACE}:typecache", asset.typeID),
-        :typeID => asset.typeID,
-        :qty  => asset.quantity,
-        :singleton => asset.singleton,
-        :locationid => @lid,
-        :location => @location
-      }
+    end
+    assets.each do |asset|
+      # no containers allowed here
+      if asset.container == {}
+        haml_tag 'div.row' do
+          haml_tag 'div.col-lg-1' do
+            haml_concat asset.quantity
+          end
+          haml_tag 'div.col-lg-4' do
+            haml_concat $redis.hget("#{NAMESPACE}:typecache", asset.typeID)
+          end
+          haml_tag 'div.col-lg-4' do
+            haml_concat location_get(asset.locationID.to_i)
+          end
+        end
+      end
     end
   end
-  out
 end
 
-def array_to_haml(array)
-  array.each do |item|
-    haml_tag :tr do
-      if item.is_a? Array
-        array_to_haml(item)
-      else
-        haml_tag :td do
-          haml_concat item[:type]
+def asset_haml(assets)
+  assets.each do |asset|
+    unless asset.container == {}
+      haml_tag 'div.panel' do
+        haml_tag 'div.panel-heading' do
+          haml_tag :b do
+            haml_concat "#{location_get(asset.locationID.to_i)} #{$redis.hget("#{NAMESPACE}:typecache", asset.typeID)}"
+          end
         end
-        haml_tag :td do
-          haml_concat item[:qty]
-        end
-        haml_tag :td do
-          haml_concat item[:location]
-        end
-        haml_tag :td do
-          haml_concat item[:locationid]
+        asset_haml(asset.container['contents'])
+      end
+    else
+      if asset.locationID.nil?
+        haml_tag 'div.row' do
+          haml_tag 'div.col-lg-1' do
+            haml_concat asset.quantity
+          end
+          haml_tag 'div.col-lg-4' do
+            haml_concat $redis.hget("#{NAMESPACE}:typecache", asset.typeID)
+          end
         end
       end
     end
