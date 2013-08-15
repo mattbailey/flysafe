@@ -8,6 +8,7 @@ require 'sinatra/flash'
 require 'json'
 require 'sinatra/redirect_with_flash'
 require 'eaal'
+require 'digest/sha1'
 
 @redis_config = YAML.load_file('./config/redis.yml')
 

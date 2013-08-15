@@ -1,0 +1,10 @@
+%h1 Mapping
+%ul.nav.nav-pills.nav-stacked
+  - @maps.each do |map|
+    %li
+      %a
+%form.form-inline{:method => 'POST', :role => 'form'}
+  .form-group
+    %label.sr-only{:for => 'name'} Map Name
+    %input.form-control{:type => 'text', :name => 'name', :placeholder => 'Map Name'}
+  %button.btn.btn-primary{:type => 'submit'} New Map
