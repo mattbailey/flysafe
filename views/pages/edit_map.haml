@@ -1,0 +1,15 @@
+%h1 Editing Map: #{Time.at(@id.to_i).ctime}
+- @map = $redis.hgetall("#{NAMESPACE}:map:#{@id}").symbolize_keys
+%ul
+  %li Created by: #{@map[:creator]}
+  %li In a: #{@map[:ship]}
+  %li Starting in: #{@map[:start]} #{@map[:startsec]}
+%br
+%a{:href => "/delete/map/#{@id}"}
+  %button.btn.btn-danger Delete This Map
+%br
+%p
+  Debug:
+  = env
+%a{:href => "/update/map/#{@id}"}
+  %button.btn.btn-primary Add Node #{env['HTTP_EVE_SOLARSYSTEMNAME']}

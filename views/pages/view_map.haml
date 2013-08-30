@@ -1,0 +1,13 @@
+%h1 Map: #{Time.at(@id.to_i).ctime}
+- @map = $redis.hgetall("#{NAMESPACE}:map:#{@id}").symbolize_keys
+%ul
+  %li Created by: #{@map[:creator]}
+  %li In a: #{@map[:ship]}
+  %li Starting in: #{@map[:start]} #{@map[:startsec]}
+%br
+%a{:href => "/edit/map/#{@id}"}
+  %button.btn.btn-warning Edit This Map
+%a{:href => "/delete/map/#{@id}"}
+  %button.btn.btn-danger Delete This Map
+%br
+
