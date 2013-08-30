@@ -1,0 +1,26 @@
+%h1 Maps
+%ul.list-unstyled
+  - @maps.keys.each do |map|
+    %li
+      %ul.list-inline
+        %li
+          %a{:href => "/edit/map/#{map}"}
+            %button.btn.btn-warning.btn-xs Edit
+        %li
+          %a{:href => "/delete/map/#{map}"}
+            %button.btn.btn-danger.btn-xs Delete
+        %li
+          %a{:href => "/view/map/#{map}"} #{Time.at(map).ctime} | #{@maps[map][:creator]} | #{@maps[map][:corp]} | #{@maps[map][:ship]}
+        %li
+          - if @maps[map][:startsec].to_f == 1
+            %span.label.label-info #{@maps[map][:start]}
+          - elsif @maps[map][:startsec].to_f >= 0.5
+            %span.label.label-success #{@maps[map][:start]}
+          - elsif @maps[map][:startsec].to_f >= 0
+            %span.label.label-warning #{@maps[map][:start]}
+          - elsif @maps[map][:startsec].to_f < 0
+            %span.label.label-danger #{@maps[map][:start]}
+%form.form-inline{:method => 'POST', :role => 'form'}
+  .form-group
+    %input{:type => 'hidden', :value => Time.now().to_i, :name => :time}
+  %button.btn.btn-primary{:type => 'submit'} New Map

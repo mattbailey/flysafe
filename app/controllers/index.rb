@@ -18,28 +18,52 @@ get "/assets" do
 end
 
 get "/map" do
-  @maps = $redis.keys("#{NAMESPACE}:map:*")
+  @mapkeys = $redis.keys("#{NAMESPACE}:map:*")
+  @maps ||= {}
+  @mapkeys.each do |key|
+    time = key.split(':').last.to_i
+    @maps[time] = $redis.hgetall(key).symbolize_keys
+  end
   haml :maps
 end
 
 post "/map" do
-  @mapid = Digest::SHA1.hexdigest(params[:name])
-  if $redis.keys(@mapid)
-    @exists = true
-  else
+  @time = params[:time]
+  if $redis.keys("#{NAMESPACE}:map:#{@time}") != []
     @exists = false
+  else
+    @exists = true
     @newmap = {
-      :name    => params[:name],
-      :creator => env['HTTP_EVE_CHARNAME'],
-      :start   => env['HTTP_EVE_SOLARSYSTEMNAME'],
+      :time     => @time,
+      :creator  => env['HTTP_EVE_CHARNAME'],
+      :start    => env['HTTP_EVE_SOLARSYSTEMNAME'],
+      :startid  => env['HTTP_EVE_SOLARSYSTEMID'],
+      :startsec => system_meta(env['HTTP_EVE_SOLARSYSTEMID'])[:security].to_f,
+      :ship     => env['HTTP_EVE_SHIPTYPENAME'],
+      :corp     => env['HTTP_EVE_CORPNAME']
     }
-    h2r("#{NAMESPACE}:map:#{@mapid}", @newmap)
+    h2r("#{NAMESPACE}:map:#{@time}", @newmap)
   end
-  redirect "/map/#{@mapid}"
-  haml :map
+  redirect "/edit/map/#{@time}"
 end
 
-post "/map/update" do
-  @headers = headers
-  haml :map
+get "/edit/:class/:id" do
+  @id = params[:id]
+  @class = params[:class]
+  @template = "edit_#{@class}".to_sym
+  haml @template
+end
+
+get "/view/:class/:id" do
+  @id = params[:id]
+  @class = params[:class]
+  @template = "view_#{@class}".to_sym
+  haml @template
+end
+
+get "/delete/:class/:id" do
+  @id = params[:id]
+  @class = params[:class]
+  delete_item(@class, @id)
+  redirect "/#{@class}"
 end

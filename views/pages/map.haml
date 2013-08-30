@@ -1,10 +1,26 @@
 %h1 Mapping
-%ul.nav.nav-pills.nav-stacked
-  - @maps.each do |map|
+%ul.list-unstyled
+  - @maps.keys.each do |map|
     %li
-      %a
+      %ul.list-inline
+        %li
+          %a{:href => "/delete/map/#{@time}"}
+            %button.btn.btn-warning.btn-xs Edit
+        %li
+          %a{:href => "/edit/map/#{@time}"}
+            %button.btn.btn-danger.btn-xs Delete
+        %li
+          %a{:href => "/view/map/#{@time}"} #{Time.at(map).ctime} | #{@maps[map][:creator]} | #{@maps[map][:corp]} | #{@maps[map][:ship]}
+        %li
+          - if @maps[map][:startsec].to_f == 1
+            %span.label.label-info #{@maps[map][:start]}
+          - elsif @maps[map][:startsec].to_f >= 0.5
+            %span.label.label-success #{@maps[map][:start]}
+          - elsif @maps[map][:startsec].to_f >= 0
+            %span.label.label-warning #{@maps[map][:start]}
+          - elsif @maps[map][:startsec].to_f < 0
+            %span.label.label-danger #{@maps[map][:start]}
 %form.form-inline{:method => 'POST', :role => 'form'}
   .form-group
-    %label.sr-only{:for => 'name'} Map Name
-    %input.form-control{:type => 'text', :name => 'name', :placeholder => 'Map Name'}
+    %input{:type => 'hidden', :value => Time.now().to_i, :name => :time}
   %button.btn.btn-primary{:type => 'submit'} New Map
