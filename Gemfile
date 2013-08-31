@@ -13,6 +13,7 @@ gem 'tux'
 gem 'sinatra-flash'
 gem 'sinatra-redirect-with-flash'
 gem 'eaal'
+gem 'nokogiri'
 
 group :development do
   gem 'sass'

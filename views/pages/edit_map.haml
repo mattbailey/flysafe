@@ -12,4 +12,7 @@
   Debug:
   = env
 %a{:href => "/update/map/#{@id}"}
-  %button.btn.btn-primary Add Node #{env['HTTP_EVE_SOLARSYSTEMNAME']}
+  %button.btn.btn-primary Add K162 #{env['HTTP_EVE_SOLARSYSTEMNAME']}
+  - @sys = "#{NAMESPACE}:system:#{env['HTTP_EVE_SOLARSYSTEMID']}"
+  - @sysmeta = $redis.hgetall(@sys).symbolize_keys
+  %button.btn.btn-primary Add Static #{@sysmeta[:whStatic]}

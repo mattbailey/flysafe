@@ -73,10 +73,21 @@ namespace :cache do
     require 'yaml'
     require 'redis'
     require 'hiredis'
+    require 'nokogiri'
+    require 'open-uri'
+    SM_URI = 'http://www.staticmapper.com/index.php?system='
+    def getstatic(name)
+      page = Nokogiri::HTML(open("#{SM_URI}#{name}"))
+      page.css('p').each do |par|
+        if par.children[0].to_s == "Probable static : "
+          return par.children.children.to_s
+        end
+      end
+    end
     @namespace = YAML.load_file('./config/redis.yml')[:namespace]
     unless ENV['ENVIRONMENT']
       print "Environment name (e.g. production/development): "
-      ENV['ENVIRONMENT'] = STDIN.gets.chomp.to_sym
+      ENV['ENVIRONMENT'] = STDIN.gets.chomp
     end
     @redis = Redis.new(YAML.load_file('./config/redis.yml')[ENV['ENVIRONMENT'].to_sym])
     @ss = YAML.load_file('data/systems.yml')
@@ -84,6 +95,13 @@ namespace :cache do
       @ss[key].keys.each do |attrib|
         @redis.hset "#{@namespace}:system:#{key}", attrib, @ss[key][attrib]
       end
+      if @ss[key][:solarSystemName] =~ /J[0-9].*/
+        @redis.hset "#{@namespace}:system:#{key}", 'whStatic', getstatic(@ss[key][:solarSystemName])
+      end
+    end
+    @whclass = YAML.load_file('data/wh_classes.yml')
+    @whclass.each do |wh|
+      @redis.hset "#{@namespace}:system:#{wh.keys.first}", "whClass", wh[wh.keys.first]
     end
   end
   task :stationid do
