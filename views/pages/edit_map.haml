@@ -24,6 +24,9 @@
       %input.form-control{:type => 'text', :id => 'whname', :placeholder => @sysmeta[:whStatic], :value => @sysmeta[:whStatic]}
     %button.btn.btn-primary{:type => 'submit'} Add WH
 %p
-  %a{:href => "/update/map/#{@id}/K162"}
-    %button.btn.btn-primary Add K162
+  %form.form-inline{:role => 'form', :method => 'POST'}
+    .form-group
+      %label.sr-only{:for => 'whname'} Wormhole Name
+      %input.form-control{:type => 'text', :id => 'k162whname', :placeholder => 'Entrance Name'}
+    %button.btn.btn-primary{:type => 'submit'} Add K162
 

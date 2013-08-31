@@ -67,3 +67,21 @@ get "/delete/:class/:id" do
   delete_item(@class, @id)
   redirect "/#{@class}"
 end
+
+post "/edit/:class/:id" do
+  @id = params[:id]
+  @class = params[:class]
+  if @class == 'map'
+    if params[:whname]
+      @newchild = {
+        :time     => Time.now().to_i,
+        :creator  => env['HTTP_EVE_CHARNAME'],
+        :system   => env['HTTP_EVE_SOLARSYSTEMNAME'],
+        :systemid => env['HTTP_EVE_SOLARSYSTEMID'],
+        :security => system_meta(env['HTTP_EVE_SOLARSYSTEMID'])[:security].to_f,
+      }
+    end
+      $redis.hset("#{NAMESPACE}:map:#{@id}:
+    end
+  end
+end
