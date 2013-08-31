@@ -8,11 +8,22 @@
 %a{:href => "/delete/map/#{@id}"}
   %button.btn.btn-danger Delete This Map
 %br
+%br
+%br
 %p
-  Debug:
+-#  Debug:
   = env
-%a{:href => "/update/map/#{@id}"}
-  %button.btn.btn-primary Add K162 #{env['HTTP_EVE_SOLARSYSTEMNAME']}
-  - @sys = "#{NAMESPACE}:system:#{env['HTTP_EVE_SOLARSYSTEMID']}"
-  - @sysmeta = $redis.hgetall(@sys).symbolize_keys
-  %button.btn.btn-primary Add Static #{@sysmeta[:whStatic]}
+- @sys = "#{NAMESPACE}:system:#{env['HTTP_EVE_SOLARSYSTEMID']}"
+- @sysmeta = $redis.hgetall(@sys).symbolize_keys
+%p You are in #{env['HTTP_EVE_SOLARSYSTEMNAME']}
+%p Probable static is #{@sysmeta[:whStatic]}
+%p
+  %form.form-inline{:role => 'form', :method => 'POST'}
+    .form-group
+      %label.sr-only{:for => 'whname'} Wormhole Name
+      %input.form-control{:type => 'text', :id => 'whname', :placeholder => @sysmeta[:whStatic], :value => @sysmeta[:whStatic]}
+    %button.btn.btn-primary{:type => 'submit'} Add WH
+%p
+  %a{:href => "/update/map/#{@id}/K162"}
+    %button.btn.btn-primary Add K162
+
