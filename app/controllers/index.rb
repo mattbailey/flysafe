@@ -72,16 +72,21 @@ post "/edit/:class/:id" do
   @id = params[:id]
   @class = params[:class]
   if @class == 'map'
+    @nodes ||= {}
+    $redis.keys("#{NAMESPACE}:map:#{@id}:node:*").each do |node|
+      @nodes << $redis.hgetall(node).symbolize_keys
+    end
     if params[:whname]
+      @time = Time.now().to_i
       @newchild = {
-        :time     => Time.now().to_i,
+        :time     => @time,
         :creator  => env['HTTP_EVE_CHARNAME'],
         :system   => env['HTTP_EVE_SOLARSYSTEMNAME'],
         :systemid => env['HTTP_EVE_SOLARSYSTEMID'],
         :security => system_meta(env['HTTP_EVE_SOLARSYSTEMID'])[:security].to_f,
+        :parent   => @id,
       }
-    end
-      $redis.hset("#{NAMESPACE}:map:#{@id}:
+      h2r("#{NAMESPACE}:map:#{@id}:node:#{@time}", @newchild)
     end
   end
 end

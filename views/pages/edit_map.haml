@@ -18,15 +18,46 @@
 %p You are in #{env['HTTP_EVE_SOLARSYSTEMNAME']}
 %p Probable static is #{@sysmeta[:whStatic]}
 %p
-  %form.form-inline{:role => 'form', :method => 'POST'}
-    .form-group
-      %label.sr-only{:for => 'whname'} Wormhole Name
-      %input.form-control{:type => 'text', :id => 'whname', :placeholder => @sysmeta[:whStatic], :value => @sysmeta[:whStatic]}
-    %button.btn.btn-primary{:type => 'submit'} Add WH
+  Current system is in
+  %strong.text-primary blue
 %p
-  %form.form-inline{:role => 'form', :method => 'POST'}
-    .form-group
-      %label.sr-only{:for => 'whname'} Wormhole Name
-      %input.form-control{:type => 'text', :id => 'k162whname', :placeholder => 'Entrance Name'}
-    %button.btn.btn-primary{:type => 'submit'} Add K162
-
+  Previous system is in
+  %strong.text-success green
+%ul.list-inline
+  - if env['HTTP_EVE_SOLARSYSTEMNAME'] == @map[:start]
+    %li
+      %strong.text-primary #{@map[:start]} | #{Time.at(@map[:time].to_i).ctime} | #{@map[:creator]} | #{@map[:corp]} | #{@map[:ship]}
+  - else
+    %li #{@map[:start]} | #{Time.at(@map[:time].to_i).ctime} | #{@map[:creator]} | #{@map[:corp]} | #{@map[:ship]}
+  %li
+    %form.form-inline{:role => 'form', :method => 'POST'}
+      .form-group
+        %label.sr-only{:for => 'whname'} Wormhole Name
+        %input.form-control{:type => 'text', :id => 'whname', :placeholder => @sysmeta[:whStatic], :value => @sysmeta[:whStatic], :maxlength => 4, :size => 4}
+      %button.btn.btn-primary{:type => 'submit'} Add WH
+  %li
+    %form.form-inline{:role => 'form', :method => 'POST'}
+      .form-group
+        %label.sr-only{:for => 'whname'} Wormhole Name
+        %input.form-control{:type => 'text', :id => 'k162whname', :placeholder => 'Name', :maxlength => 4, :size => 4}
+      %button.btn.btn-primary{:type => 'submit'} Add K162
+- if !@nodes.nil?
+  - @nodes.each do |node|
+    %ul.list-inline
+      - if env['HTTP_EVE_SOLARSYSTEMNAME'] == node[:system]
+        %li
+          %strong.text-success #{node[:system]} | #{Time.at(node[:time].to_i).ctime} | #{node[:creator]} | #{node[:corp]} | #{node[:ship]}
+      - else
+        %li #{node[:system]} | #{Time.at(node[:time].to_i).ctime} | #{node[:creator]} | #{node[:corp]} | #{node[:ship]}
+      %li
+        %form.form-inline{:role => 'form', :method => 'POST'}
+          .form-group
+            %label.sr-only{:for => 'whname'} Wormhole Name
+            %input.form-control{:type => 'text', :id => 'whname', :placeholder => @sysmeta[:whStatic], :value => @sysmeta[:whStatic], :maxlength => 4, :size => 4}
+          %button.btn.btn-primary{:type => 'submit'} Add WH
+      %li
+        %form.form-inline{:role => 'form', :method => 'POST'}
+          .form-group
+            %label.sr-only{:for => 'whname'} Wormhole Name
+            %input.form-control{:type => 'text', :id => 'k162whname', :placeholder => 'Name', :maxlength => '4', :size => '4'}
+          %button.btn.btn-primary{:type => 'submit'} Add K162
